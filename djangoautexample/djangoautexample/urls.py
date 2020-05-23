@@ -31,10 +31,10 @@ from website.views import home
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("home/", home),
+    path("", home, name="home"),
     path("profile/", profile),
     path("admin/", admin.site.urls),
-    path("login/", LoginView.as_view(template_name="authn/login.html"), name="login",),
+    path("login/", LoginView.as_view(template_name="authn/login.html"), name="login"),
     path(
         "logout/",
         LogoutView.as_view(template_name="authn/logged_out.html"),
@@ -74,7 +74,5 @@ urlpatterns = [
         ),
         name="password_reset_confirm",
     ),
-    path("register/", RegisterView.as_view())
-    # email verificaton
-    # /email-verify?token=kskskdkdkf
+    path("register/", RegisterView.as_view(), name="register"),
 ]

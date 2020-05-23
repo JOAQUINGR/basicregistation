@@ -1,4 +1,71 @@
 {% extends "website/base.html" %}
+
+{% block navbar %}{% endblock %}
+
+{% block morestyles %}
+.bd-placeholder-img {
+    font-size: 1.125rem;
+    text-anchor: middle;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  @media (min-width: 768px) {
+    .bd-placeholder-img-lg {
+      font-size: 3.5rem;
+    }
+  }
+
+body {
+    height: 100%;
+  }
+  
+  body {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-align: center;
+    align-items: center;
+    padding-top: 40px;
+    padding-bottom: 40px;
+    background-color: #f5f5f5;
+  }
+  
+  #content-main {
+    width: 100%;
+    max-width: 330px;
+    padding: 15px;
+    margin: auto;
+  }
+  #content-main #checkbox {
+    font-weight: 20;
+  }
+  #content-main .form-row {
+    position: relative;
+    box-sizing: border-box;
+    height: auto;
+    padding: 10px;
+    font-size: 16px;
+  }
+  #content-main .form-row:focus {
+    z-index: 40;
+  }
+  #login-form input[type="text"] {
+    margin-bottom: -1px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+  #login-form input[type="password"] {
+    margin-bottom: 10px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+  }
+
+
+
+     
+{% endblock %}
 {% load i18n static %}
 
 {% block extrastyle %}{{ block.super }}
@@ -17,38 +84,41 @@
 {% block breadcrumbs %}{% endblock %}
 
 {% block content %}
-{% if form.errors and not form.non_field_errors %}
-<p class="errornote">
-    {% if form.errors.items|length == 1 %}{% trans "Please correct the error below." %}{% else %}{% trans "Please correct the errors below." %}{% endif %}
-</p>
-{% endif %}
 
-{% if form.non_field_errors %}
-{% for error in form.non_field_errors %}
-<p class="errornote">
-    {{ error }}
-</p>
-{% endfor %}
-{% endif %}
 <div id="content-main">
+    <img class="mb-4" src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Science_AAAS_logo.svg/1920px-Science_AAAS_logo.svg.png" alt="" width="200" height="72">
+        <h1 class="h3 mb-3 font-weight-normal">SpeedUp Science</h1>
+        {% if form.errors and not form.non_field_errors %}
+            <p class="errornote">
+            {% if form.errors.items|length == 1 %}{% trans "Please correct the error below." %}{% else %}{% trans "Please correct the errors below." %}{% endif %}
+            </p>
+        {% endif %}
+        {% if form.non_field_errors %}
+            {% for error in form.non_field_errors %}
+                <p class="errornote">
+                {{ error }}
+                </p>
+            {% endfor %}
+        {% endif %}
+        {% if user.is_authenticated %}
+            <p class="errornote">
+            {% blocktrans trimmed %}
+            You are authenticated as {{ username }}, but are not authorized to
+            access this page. Would you like to login to a different account?
+            {% endblocktrans %}
+            </p>
+        {% endif %}
 
-    {% if user.is_authenticated %}
-    <p class="errornote">
-        {% blocktrans trimmed %}
-        You are authenticated as {{ username }}, but are not authorized to
-        access this page. Would you like to login to a different account?
-        {% endblocktrans %}
-    </p>
-    {% endif %}
-
-    <form action="{{ app_path }}" method="post" id="login-form">{% csrf_token %}
-        <div class="form-row">
+    <form action="{{ app_path }}" method="post" id="login-form" >{% csrf_token %}
+        <div class="form-row" >
             {{ form.username.errors }}
-            {{ form.username.label_tag }} {{ form.username }}
+            <label for="id_username" class="sr-only" >Username</label>
+            <input type="text" id="id_username" class="form-control" name="username" autofocus autocapitalize="none" autocomplete="username" maxlength="200"  placeholder="Username" required >
+  
         </div>
         <div class="form-row">
-            {{ form.password.errors }}
-            {{ form.password.label_tag }} {{ form.password }}
+            <label for="id_password" class="sr-only">Password</label>
+            <input type="password" name="password" autocomplete="current-password" required id="id_password" class="form-control" placeholder="Password" required>
             <input type="hidden" name="next" value="{{ next }}">
         </div>
         {% url 'admin_password_reset' as password_reset_url %}
@@ -57,8 +127,18 @@
             <a href="{{ password_reset_url }}">{% trans 'Forgotten your password or username?' %}</a>
         </div>
         {% endif %}
-        <div class="submit-row">
-            <label>&nbsp;</label><input type="submit" value="{% trans 'Log in' %}">
+        <div class="checkbox mb-3">
+            <label>
+              <input type="checkbox" value="remember-me"> Remember me
+            </label>
+          </div>
+          <button class="btn btn-lg btn-primary btn-block" type="submit " value="{% trans 'Log in' %}">Log in</button>
+          <br> 
+          <a href="{% url 'register' %}">I don't have account <span class="sr-only">(current)</span></a>
+          <br> 
+          <a href="{% url 'password_reset' %}">I forgot my password <span class="sr-only">(current)</span></a>
+          
+            <!-- <label>&nbsp;</label><input type="submit" value="{% trans 'Log in' %}"> -->
         </div>
     </form>
 
